@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Book Library Manager</title>
+
+    <style>
+        body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+
+    background-image: url("https://images.unsplash.com/photo-1579370318443-8da816457e3d?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8bGlicmFyeSUyMGJvb2tzfGVufDB8fDB8fHww");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+  }
+
+        .container {
+            width: 80%;
+            margin: 40px auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #079e4d;
+        }
+
+        form {
+            display: stick;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        input, select, button {
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        input, select {
+            flex: 1;
+        }
+
+        button {
+            background: #216506;
+            color: rgb(5, 81, 25);
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background: #12a1ab;
+        }
+
+        .search {
+            width: 100%;
+            margin-bottom: 20px;
+            color: #423d07;
+        }
+
+        .book {
+            background: #f9f9f9;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 5px solid #007bff;
+        }
+
+        .book h3 {
+            margin: 0;
+        }
+
+        .read {
+            color: green;
+            font-weight: bold;
+        }
+
+        .unread {
+            color: rgba(255, 0, 0, 0.87);
+            font-weight: bold;
+        }
+
+        .delete-btn {
+            background: red;
+            margin-top: 10px;
+        }
+
+        .read-btn {
+            background: green;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Book Library Manager</h1>
+
+        <form onsubmit="addBook(event)">
+            <input type="text" id="title" placeholder="Book Title" required>
+            <input type="text" id="author" placeholder="Author Name" required>
+            <input type="text" id="category" placeholder="Category" required>
+
+            <select id="status">
+                <option value="Unread">Unread</option>
+                <option value="Read">Read</option>
+            </select>
+
+            <button type="submit">Add Book</button>
+        </form>
+
+        <input 
+            class="search" 
+            type="text" 
+            id="searchInput" 
+            placeholder="Search book..." 
+            onkeyup="searchBooks()"
+        >
+
+        <div id="bookList"></div>
+    </div>
+
+    <script>
+        let books = [];
+
+        function addBook(event) {
+            event.preventDefault();
+
+            let title = document.getElementById("title").value;
+            let author = document.getElementById("author").value;
+            let category = document.getElementById("category").value;
+            let status = document.getElementById("status").value;
+
+            let book = {
+                title: title,
+                author: author,
+                category: category,
+                status: status
+            };
+
+            books.push(book);
+
+            document.querySelector("form").reset();
+
+            displayBooks();
+        }
+
+        function displayBooks() {
+            let bookList = document.getElementById("bookList");
+            bookList.innerHTML = "";
+
+            books.forEach(function(book, index) {
+                let bookDiv = document.createElement("div");
+                bookDiv.className = "book";
+
+                bookDiv.innerHTML = `
+                    <h3>${book.title}</h3>
+                    <p><strong>Author:</strong> ${book.author}</p>
+                    <p><strong>Category:</strong> ${book.category}</p>
+                    <p>
+                        <strong>Status:</strong> 
+                        <span class="${book.status === 'Read' ? 'read' : 'unread'}">
+                            ${book.status}
+                        </span>
+                    </p>
+
+                    <button class="read-btn" onclick="changeStatus(${index})">
+                        Change Status
+                    </button>
+
+                    <button class="delete-btn" onclick="deleteBook(${index})">
+                        Delete
+                    </button>
+                `;
+
+                bookList.appendChild(bookDiv);
+            });
+        }
+
+        function deleteBook(index) {
+            books.splice(index, 1);
+            displayBooks();
+        }
+
+        function changeStatus(index) {
+            if (books[index].status === "Read") {
+                books[index].status = "Unread";
+            } else {
+                books[index].status = "Read";
+            }
+
+            displayBooks();
+        }
+
+        function searchBooks() {
+            let input = document.getElementById("searchInput").value.toLowerCase();
+            let bookItems = document.getElementsByClassName("book");
+
+            for (let i = 0; i < bookItems.length; i++) {
+                let text = bookItems[i].innerText.toLowerCase();
+
+                if (text.includes(input)) {
+                    bookItems[i].style.display = "block";
+                } else {
+                    bookItems[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+
+</body>
+</html>
